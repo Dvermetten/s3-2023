@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 from typing import Protocol, TypeVar, Any, Optional, Tuple
-from collections.abc import Iterable, Callable
+from collections.abc import Iterable, Callable, Sequence
 
 from operator import itemgetter
 from itertools import tee
@@ -70,3 +70,45 @@ def pairwise(iterable: Iterable[T]) -> Iterable[Tuple[T, T]]:
     a, b = tee(iterable)
     next(b, None)
     return zip(a, b)
+
+def parse_parameters(configuration_parameters: Sequence[str]) -> dict:
+    """
+    Function to parse algorithm parameters (following irace specifications) into dictionaries to be used in the target-runner
+
+    Parameters
+    ----------
+    configuration_parameters:
+        The command line arguments, without the executables name
+    Notes
+    -----
+    Returns Dictionary with parsed parameters
+    """
+    import argparse 
+
+    parser = argparse.ArgumentParser(
+        description="Run basic tuning of specified algorithm",
+        argument_default=argparse.SUPPRESS,
+    )
+
+    # Positional parameters (defined by irace, need to be present)
+    parser.add_argument("configuration_id", type=str)
+    parser.add_argument("instance_name", type=str)
+    parser.add_argument("seed", type=int)
+    parser.add_argument("instance", type=argparse.FileType('r'))
+    # parser.add_argument("bound", type=float) #Disabled, for now we use cbudget and lbudget as fixed parameters instead
+
+    # algorithm parameters
+    parser.add_argument("--csearch", dest="csearch", type=str, required=True)
+    parser.add_argument("--lsearch", dest="lsearch", type=str, required=True)
+    parser.add_argument("--alpha", dest="alpha", type=float, default=0.01)
+    parser.add_argument("--beta", dest="beta", type=float, default=5.0)
+    parser.add_argument("--rho", dest="rho", type=float, default=0.5)
+    parser.add_argument("--tau0", dest="tau0", type=float, default=1/3000.0)
+    parser.add_argument("--taumax", dest="taumax", type=float, default=1/3000.0)
+    parser.add_argument("--globalratio", dest="globalratio", type=float, default=0.5)
+    parser.add_argument("--init_temp", dest="init_temp", type=float, default=30.0)
+    parser.add_argument("--cbudget", dest="cbudget", type=float, default=1)
+    parser.add_argument("--lbudget", dest="lbudget", type=float, default=1)
+
+    # Process into dicts
+    return parser.parse_args(configuration_parameters).__dict__

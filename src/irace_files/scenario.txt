@@ -1,0 +1,8 @@
+testInstancesDir = "../../data/tsp/"
+trainInstancesDir = "../../data/tsp/"
+maxExperiments=2500 
+parallel=8
+testType='f-test' 
+seed = 0
+targetRunner = "../tsp_irace.py"
+firstTest = 2

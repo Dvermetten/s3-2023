@@ -1,0 +1,11 @@
+csearch "--csearch " c ('heuristic', 'greedy', 'beam', 'grasp', 'as', 'mmas')
+lsearch "--lsearch " c ('bi', 'fi', 'ils', 'rls', 'sa')
+alpha "--alpha " r,log (0.001, 0.1) | csearch == 'grasp'
+beta "--beta " r (2, 25) | csearch %in% c('as', 'mmas')
+rho "--rho " r (0,1) | csearch %in% c('as', 'mmas')
+tau0 "--tau0 " r,log (0.0001,1) | csearch == 'as'
+taumax "--taumax " r,log (0.0001,1) | csearch == 'mmas'
+globalratio "--globalratio " r (0,1) | csearch == 'mmas'
+init_temp "--init_temp " i (10,100) | lsearch == 'sa'
+cbudget "--cbudget " c (5)
+lbudget "--lbudget " c (1) 
